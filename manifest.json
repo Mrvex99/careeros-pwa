@@ -1,0 +1,43 @@
+{
+  "name": "Career OS — د. محمد",
+  "short_name": "Career OS",
+  "description": "نظام إدارة الحياة المهنية — طبيب + مندوب + طالب بورد",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070b18",
+  "theme_color": "#070b18",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "medical", "business"],
+  "shortcuts": [
+    {
+      "name": "زيارة دكتور",
+      "short_name": "زيارة",
+      "description": "تسجيل زيارة دكتور جديدة",
+      "url": "/?action=visit",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "تسجيل سريع",
+      "short_name": "سريع",
+      "description": "تسجيل سريع لليوم",
+      "url": "/?action=log",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
