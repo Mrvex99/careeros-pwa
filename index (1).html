@@ -2169,11 +2169,15 @@ async function generateWeeklyPlan() {
   document.getElementById('weeklyPlanContent').innerHTML = '<div class="loading"><div class="spinner"></div>جاري توليد الخطة...</div>';
 
   if (APP.apiUrl) {
-    const result = await callAPI('/getweek');
-    if (result) {
-      renderWeeklyPlanFromText(result);
-      return;
-    }
+    await callAPI('/getweek');
+    showToast('📊 تم توليد الخطة — تحقق من Telegram', 'success');
+    document.getElementById('weeklyPlanContent').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📱</div>
+        <div class="empty-text">تم إرسال الخطة على Telegram</div>
+        <div class="empty-sub">تحقق من البوت لمشاهدة الخطة الكاملة</div>
+      </div>`;
+    return;
   }
 
   // Local generation fallback
