@@ -2176,8 +2176,9 @@ function updatePlanWeekRange() {
 async function generateWeeklyPlan() {
   document.getElementById('weeklyPlanContent').innerHTML = '<div class="loading"><div class="spinner"></div>جاري توليد الخطة...</div>';
 
-  // Reload fresh data then render locally
-  await loadAllData();
+  await loadMonthlyPlan();
+  await loadTravel();
+  await loadShifts();
   renderWeeklyPlanLocal();
 
   // Also send to Telegram in background
