@@ -1883,7 +1883,7 @@ function populateDoctorFilters() {
   }
 
   // Reps (stored in Notes column index 9 in our import)
-  const reps = [...new Set(docs.map(d => String(d[9]).trim()).filter(v => v && v !== 'undefined'))].sort();
+ const reps = [...new Set(docs.map(d => String(d[17] || "").trim()).filter(v => v && v !== 'undefined'))].sort();
   const repSel = document.getElementById('filterRep');
   if (repSel) {
     const cur = repSel.value;
@@ -1921,7 +1921,7 @@ function renderDoctors() {
   // Rep filter
   const repEl = document.getElementById('filterRep');
   const repFilter = repEl ? repEl.value : '';
-  if (repFilter) docs = docs.filter(d => String(d[9]).trim() === repFilter);
+  if (repFilter) docs = docs.filter(d => String(d[17] || "").trim() === repFilter);
 
   // Quick filters
   if (currentQuickFilter === 'today') {
@@ -1929,7 +1929,8 @@ function renderDoctors() {
   } else if (currentQuickFilter === 'overdue') {
     docs = docs.filter(d => d[10] && d[10].toString().substring(0,10) < today);
   } else if (currentQuickFilter === 'no-visit') {
-    docs = docs.filter(d => !d[9] || d[9] === '');
+    docs = docs.filter(d => !d[9] || d[9].toString().substring(0,10) === '');
+
   }
 
   // Search
@@ -1941,7 +1942,7 @@ function renderDoctors() {
       String(d[3]).toLowerCase().includes(q) ||
       String(d[5]).toLowerCase().includes(q) ||
       String(d[6]).toLowerCase().includes(q) ||
-      String(d[9]).toLowerCase().includes(q)
+      String(d[17] || "").toLowerCase().includes(q)
     );
   }
 
