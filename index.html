@@ -2219,7 +2219,8 @@ function renderWeeklyPlanLocal() {
   // Build plan map: date → [doctors]
   const planMap = {};
   planRows.forEach(r => {
-    const pd = r[12] ? r[12].toString().substring(0, 10) : '';
+    const rawDate = r[12] ? new Date(r[12]) : null;
+const pd = rawDate ? new Date(rawDate.getTime() + 3*3600000).toISOString().substring(0,10) : '';
     if (!pd) return;
     if (!planMap[pd]) planMap[pd] = [];
     const done   = parseFloat(r[9]) || 0;
