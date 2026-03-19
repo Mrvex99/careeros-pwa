@@ -2191,10 +2191,6 @@ async function generateWeeklyPlan() {
  await loadMonthlyPlan();
   await loadTravel();
   await loadShifts();
-   
-  // DEBUG BUTTON
-  const dbg = await readSheet('MonthlyPlan').catch(e => 'ERROR: ' + e);
-  alert('MonthlyPlan: ' + (Array.isArray(dbg) ? dbg.length + ' rows\nRow1: ' + JSON.stringify(dbg[1]) : dbg));
   renderWeeklyPlanLocal();
    
   // Also send to Telegram in background
