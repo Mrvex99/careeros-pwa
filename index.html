@@ -2180,7 +2180,13 @@ async function generateWeeklyPlan() {
   await loadTravel();
   await loadShifts();
   renderWeeklyPlanLocal();
-
+// DEBUG
+  const sample = (APP.data.monthly || []).slice(1, 3);
+  console.log('Monthly rows:', (APP.data.monthly||[]).length);
+  console.log('Sample row 0:', JSON.stringify(sample[0]));
+  console.log('Sample row 1:', JSON.stringify(sample[1]));
+```
+   
   // Also send to Telegram in background
   if (APP.apiUrl) callAPI('/getweek');
 }
