@@ -2176,16 +2176,17 @@ function updatePlanWeekRange() {
 async function generateWeeklyPlan() {
   document.getElementById('weeklyPlanContent').innerHTML = '<div class="loading"><div class="spinner"></div>جاري توليد الخطة...</div>';
 
-  await loadMonthlyPlan();
+ await loadMonthlyPlan();
   await loadTravel();
   await loadShifts();
-  renderWeeklyPlanLocal();
-// DEBUG
-  const sample = (APP.data.monthly || []).slice(1, 3);
+  
+  // DEBUG مؤقت
   console.log('Monthly rows:', (APP.data.monthly||[]).length);
-  console.log('Sample row 0:', JSON.stringify(sample[0]));
-  console.log('Sample row 1:', JSON.stringify(sample[1]));
-```
+  console.log('Travel rows:', (APP.data.travel||[]).length);
+  const s = (APP.data.monthly||[])[1];
+  if(s) console.log('Col 12 sample:', s[12]);
+  
+  renderWeeklyPlanLocal();
    
   // Also send to Telegram in background
   if (APP.apiUrl) callAPI('/getweek');
