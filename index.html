@@ -1775,12 +1775,24 @@ async function loadTravel() {
 }
 
 async function loadMonthlyPlan() {
-  if (!APP.apiUrl) { APP.data.monthly = []; return; }
+  const url = APP.apiUrl || document.getElementById('apiUrlInput')?.value?.trim();
+  if (!url) { APP.data.monthly = []; return; }
   try {
-    APP.data.monthly = await readSheet('MonthlyPlan');
+    const resp = await fetch(url + '?action=read&sheet=MonthlyPlan');
+    const json = await resp.json();
+    APP.data.monthly = json.data || [];
   } catch(e) { APP.data.monthly = []; }
 }
 
+async function loadTravel() {
+  const url = APP.apiUrl || document.getElementById('apiUrlInput')?.value?.trim();
+  if (!url) { APP.data.travel = []; return; }
+  try {
+    const resp = await fetch(url + '?action=read&sheet=Travel');
+    const json = await resp.json();
+    APP.data.travel = json.data || [];
+  } catch(e) { APP.data.travel = []; }
+}
 // ═══════════════════════════════════════════════
 //  DASHBOARD RENDER
 // ═══════════════════════════════════════════════
