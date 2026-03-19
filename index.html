@@ -2357,8 +2357,8 @@ function renderWeeklyPlanLocal() {
 
 function exportWeeklyExcel() {
   if (APP.apiUrl) {
-    callAPI('/getweek');
-    showToast('📊 تم إرسال Excel على Telegram', 'success');
+    callAPI('/getexcel');
+showToast('📊 تم إرسال Excel على Telegram', 'success');
   } else {
     showToast('❌ الاتصال غير متوفر', 'error');
   }
