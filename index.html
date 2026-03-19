@@ -1687,7 +1687,8 @@ function buildCommand(cmd, params) {
 async function readSheet(sheetName) {
   if (!APP.apiUrl) return [];
   try {
-    const url = APP.apiUrl + '?action=read&sheet=' + encodeURIComponent(sheetName);
+    const base = APP.apiUrl.split('?')[0];
+    const url  = base + '?action=read&sheet=' + encodeURIComponent(sheetName);
     const res = await fetch(url);
     const json = await res.json();
     return json.data || [];
