@@ -2224,7 +2224,8 @@ async function generateWeeklyPlan() {
   await loadMonthlyPlan();
   await loadTravel();
   await loadShifts();
-
+const check = (APP.data.monthly||[]).filter(r => r[12] && r[12].toString().includes('2026-03-24'));
+alert('أطباء 24 مارس: ' + check.length + '\nأول واحد: ' + (check[0] ? check[0][4] + ' | ' + check[0][12] : 'لا يوجد'));
   renderWeeklyPlanLocal();
 }
 
