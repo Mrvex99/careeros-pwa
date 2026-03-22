@@ -3050,9 +3050,12 @@ async function submitShift() {
   closeModal('modal-shift');
   showToast('⏳ جاري التسجيل...', '');
 
-  if (APP.apiUrl) {
+    if (APP.apiUrl) {
     await callAPI('/shift', { date, type, hosp, gov, is24h });
     await loadShifts();
+    await loadSettings();
+    autoDetectEnergyMode();
+    renderDashboard();
     renderPlanScreen();
   }
 
