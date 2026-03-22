@@ -2054,7 +2054,11 @@ function renderTodayPills() {
   const pills = [];
 
   // Check shifts
-  const todayShift = APP.data.shifts.slice(1).find(s => s[2] && s[2].toString().startsWith(today));
+    const todayShift = APP.data.shifts.slice(1).find(s => {
+    if (!s[2]) return false;
+    return formatToBaghdadDate(s[2]) === today;
+  });
+
   if (todayShift) {
     pills.push(`<span class="chip chip-red">🏥 خفارة: ${todayShift[3]}</span>`);
   } else {
