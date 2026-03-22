@@ -1901,7 +1901,7 @@ function renderEnergyMode() {
   const cfg = {
     NORMAL  : { icon:'🟩', label:'NORMAL MODE',   sub:'Deep Work مفتوح',         bg:'rgba(61,214,140,0.08)',  border:'rgba(61,214,140,0.25)'  },
     ONCALL  : { icon:'🟥', label:'ON-CALL MODE',  sub:'MCQ 15 دقيقة فقط',        bg:'rgba(255,79,109,0.08)', border:'rgba(255,79,109,0.25)'  },
-    POSTCALL: { icon:'🟨', label:'POST-CALL MODE', sub:'راحة إلزامية — وقت سورا', bg:'rgba(255,170,44,0.08)', border:'rgba(255,170,44,0.25)'  },
+    POSTCALL: { icon:'🟨', label:'POST-CALL MODE', sub:'راحة إلزامية — وقت سرى', bg:'rgba(255,170,44,0.08)', border:'rgba(255,170,44,0.25)'  },
   };
 
   const c = cfg[mode] || cfg.NORMAL;
@@ -1924,7 +1924,7 @@ async function setEnergyMode(mode) {
   const msgs = {
     NORMAL  : '🟩 Normal Mode — كل شي مفتوح',
     ONCALL  : '🟥 On-Call Mode — MCQ 15 دقيقة بس',
-    POSTCALL: '🟨 Post-Call Mode — راحة وسورا',
+    POSTCALL: '🟨 Post-Call Mode — راحة و سرى',
   };
   showToast(msgs[mode] || '', 'success');
 }
@@ -2270,7 +2270,7 @@ function renderStudyScreen() {
           <div style="font-size:24px;margin-bottom:8px">🟨</div>
           <div style="font-size:14px;font-weight:800;color:var(--amber)">POST-CALL MODE</div>
           <div style="font-size:12px;color:var(--text-muted);margin-top:4px">راحة إلزامية — لا دراسة الحين</div>
-          <div style="font-size:12px;color:var(--text-muted);margin-top:4px">🏠 وقت سورا وزيد</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px">🏠 وقت سرى وزيد</div>
         </div>`;
     } else {
       startBtn.innerHTML = `
