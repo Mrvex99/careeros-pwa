@@ -1801,7 +1801,10 @@ async function loadSettings() {
   } catch(e) {
     APP.data.settings = getLocalSettings();
   }
+  // تحديد Energy Mode تلقائياً
+  autoDetectEnergyMode();
 }
+
 
 function getLocalSettings() {
   return {
@@ -1924,6 +1927,46 @@ async function setEnergyMode(mode) {
   };
   showToast(msgs[mode] || '', 'success');
 }
+
+function autoDetectEnergyMode() {
+  const today     = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  const shifts    = APP.data.shifts.slice(1);
+
+  // لو المستخدم غيّر يدوياً اليوم — احترم اختياره
+  const lastUpdated = APP.data.settings.energy_mode_updated || '';
+  if (lastUpdated.startsWith(today)) return;
+
+  // شوف أكو خفارة اليوم
+  const todayShift = shifts.find(s =>
+    s[2] && s[2].toString().substring(0,10) === today
+  );
+
+  // شوف أكو خفارة أمس كانت 24h
+  const yesterdayShift = shifts.find(s =>
+    s[2] && s[2].toString().substring(0,10) === yesterday &&
+    (s[9] === 'TRUE' || s[9] === true)
+  );
+
+  let autoMode = 'NORMAL';
+  if (todayShift) {
+    autoMode = 'ONCALL';
+  } else if (yesterdayShift) {
+    autoMode = 'POSTCALL';
+  }
+
+  // لو الـ mode اتغيّر — حدّثه
+  if (autoMode !== (APP.data.settings.energy_mode || 'NORMAL')) {
+    APP.data.settings.energy_mode = autoMode;
+    renderEnergyMode();
+
+    if (APP.apiUrl) {
+      const base = APP.apiUrl.split('?')[0];
+      fetch(`${base}?action=edit&sheet=Settings&row=13&col=2&value=${autoMode}`);
+    }
+  }
+}
+
 
 function openStudyOrBlock() {
   const mode = APP.data.settings.energy_mode || 'NORMAL';
