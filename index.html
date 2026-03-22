@@ -1938,16 +1938,19 @@ function autoDetectEnergyMode() {
   const lastUpdated = APP.data.settings.energy_mode_updated || '';
   if (lastUpdated.startsWith(today)) return;
 
-  // شوف أكو خفارة اليوم
-  const todayShift = shifts.find(s =>
-    s[2] && s[2].toString().substring(0,10) === today
-  );
+  // شوف أكو خفارة اليوم  // شوف أكو خفارة اليوم
+  const todayShift = shifts.find(s => {
+    if (!s[2]) return false;
+    const d = formatToBaghdadDate(s[2]);
+    return d === today;
+  });
 
   // شوف أكو خفارة أمس كانت 24h
-  const yesterdayShift = shifts.find(s =>
-    s[2] && s[2].toString().substring(0,10) === yesterday &&
-    (s[9] === 'TRUE' || s[9] === true)
-  );
+  const yesterdayShift = shifts.find(s => {
+    if (!s[2]) return false;
+    const d = formatToBaghdadDate(s[2]);
+    return d === yesterday && (s[9] === 'TRUE' || s[9] === true);
+  });
 
   let autoMode = 'NORMAL';
   if (todayShift) {
