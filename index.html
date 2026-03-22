@@ -874,6 +874,22 @@ html, body {
     <div class="screen active" id="screen-home">
       <div class="screen-content">
 
+<!-- Energy Mode Bar -->
+        <div id="energyModeBar" style="border-radius:var(--radius-md);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border)">
+          <div class="row-gap">
+            <span id="energyModeIcon" style="font-size:22px">🟩</span>
+            <div>
+              <div style="font-size:13px;font-weight:800" id="energyModeLabel">NORMAL MODE</div>
+              <div style="font-size:11px;color:var(--text-muted)" id="energyModeSub">Deep Work مفتوح</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onclick="setEnergyMode('ONCALL')"   style="background:rgba(255,79,109,0.15);border:1px solid rgba(255,79,109,0.3);color:var(--red);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif">🟥</button>
+            <button onclick="setEnergyMode('POSTCALL')" style="background:rgba(255,170,44,0.15);border:1px solid rgba(255,170,44,0.3);color:var(--amber);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif">🟨</button>
+            <button onclick="setEnergyMode('NORMAL')"   style="background:rgba(61,214,140,0.15);border:1px solid rgba(61,214,140,0.3);color:var(--green);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif">🟩</button>
+          </div>
+        </div>
+         
         <!-- Hero Card -->
         <div class="dash-hero">
           <div class="dash-greeting" id="greeting">صباح الخير</div>
@@ -1059,6 +1075,12 @@ html, body {
           </div>
         </div>
 
+      <!-- Today Reviews -->
+        <div class="section-title" style="margin-top:4px">مراجعات اليوم 🔔</div>
+        <div id="todayReviews">
+          <div class="loading"><div class="spinner"></div>جاري التحميل</div>
+        </div>
+         
         <!-- Recent Sessions -->
         <div class="section-title" style="margin-top:4px">آخر الجلسات</div>
         <div id="recentSessions">
@@ -1611,6 +1633,7 @@ const APP = {
     settings: {},
     plan: [],
     pharmacy: [],
+    reviews: [],
   }
 };
 
@@ -1724,6 +1747,7 @@ async function loadAllData() {
     loadShifts(),
     loadTravel(),
     loadMonthlyPlan(),
+    loadReviews(),
   ]);
   renderDashboard();
   renderDoctors();
@@ -1824,6 +1848,52 @@ async function loadMonthlyPlan() {
   } catch(e) { APP.data.monthly = []; }
 }
 
+async function loadReviews() {
+  if (!APP.apiUrl) { APP.data.reviews = []; return; }
+  try {
+    APP.data.reviews = await readSheet('StudyReview');
+  } catch(e) { APP.data.reviews = []; }
+}
+
+function renderEnergyMode() {
+  const mode = APP.data.settings.energy_mode || 'NORMAL';
+  const bar  = document.getElementById('energyModeBar');
+  const icon = document.getElementById('energyModeIcon');
+  const label= document.getElementById('energyModeLabel');
+  const sub  = document.getElementById('energyModeSub');
+  if (!bar) return;
+
+  const cfg = {
+    NORMAL  : { icon:'🟩', label:'NORMAL MODE',   sub:'Deep Work مفتوح',         bg:'rgba(61,214,140,0.08)',  border:'rgba(61,214,140,0.25)'  },
+    ONCALL  : { icon:'🟥', label:'ON-CALL MODE',  sub:'MCQ 15 دقيقة فقط',        bg:'rgba(255,79,109,0.08)', border:'rgba(255,79,109,0.25)'  },
+    POSTCALL: { icon:'🟨', label:'POST-CALL MODE', sub:'راحة إلزامية — وقت سورا', bg:'rgba(255,170,44,0.08)', border:'rgba(255,170,44,0.25)'  },
+  };
+
+  const c = cfg[mode] || cfg.NORMAL;
+  bar.style.background   = c.bg;
+  bar.style.borderColor  = c.border;
+  icon.textContent       = c.icon;
+  label.textContent      = c.label;
+  sub.textContent        = c.sub;
+}
+
+async function setEnergyMode(mode) {
+  APP.data.settings.energy_mode = mode;
+  renderEnergyMode();
+
+  if (APP.apiUrl) {
+    const base = APP.apiUrl.split('?')[0];
+    await fetch(`${base}?action=edit&sheet=Settings&row=14&col=2&value=${mode}`);
+  }
+
+  const msgs = {
+    NORMAL  : '🟩 Normal Mode — كل شي مفتوح',
+    ONCALL  : '🟥 On-Call Mode — MCQ 15 دقيقة بس',
+    POSTCALL: '🟨 Post-Call Mode — راحة وسورا',
+  };
+  showToast(msgs[mode] || '', 'success');
+}
+   
 // ═══════════════════════════════════════════════
 //  DASHBOARD RENDER
 // ═══════════════════════════════════════════════
@@ -1857,6 +1927,7 @@ function renderDashboard() {
 
   // Today pills
   renderTodayPills();
+  renderEnergyMode();
 
   // Today follow-ups
   renderTodayFollowups();
@@ -2064,6 +2135,7 @@ function renderStudyScreen() {
   if (APP.studySession) {
     showActiveSession();
   }
+   renderTodayReviews();
 }
 
 function renderTopicBreakdown() {
@@ -2120,6 +2192,40 @@ function renderRecentSessions() {
   }).join('');
 }
 
+function renderTodayReviews() {
+  const today = new Date().toISOString().split('T')[0];
+  const rows  = APP.data.reviews.slice(1).filter(r => {
+    if (String(r[9]) !== 'Active') return false;
+    const nr = String(r[7]).trim().substring(0,10);
+    return nr <= today;
+  });
+
+  // إذا ما في عنصر — ما نضيف شي
+  let container = document.getElementById('todayReviews');
+  if (!container) return;
+
+  if (!rows.length) {
+    container.innerHTML = `
+      <div class="empty-state" style="padding:20px">
+        <div class="empty-icon" style="font-size:28px">✅</div>
+        <div class="empty-text">لا مراجعات مستحقة اليوم</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = rows.map(r => {
+    const overdue = String(r[7]).trim().substring(0,10) < today;
+    return `<div class="list-item">
+      <div class="list-icon" style="background:${overdue?'var(--red-glow)':'var(--amber)' + '22'}">${overdue?'🔴':'🟡'}</div>
+      <div class="list-content">
+        <div class="list-title">${r[2]}</div>
+        <div class="list-sub">Level ${r[6]} — ${r[3]}</div>
+      </div>
+      <span class="chip ${overdue?'chip-red':'chip-amber'}">${overdue?'متأخرة':'اليوم'}</span>
+    </div>`;
+  }).join('');
+}
+   
 // ═══════════════════════════════════════════════
 //  STUDY SESSION
 // ═══════════════════════════════════════════════
