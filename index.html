@@ -1918,7 +1918,7 @@ async function setEnergyMode(mode) {
 
   if (APP.apiUrl) {
     const base = APP.apiUrl.split('?')[0];
-    await fetch(`${base}?action=edit&sheet=Settings&row=14&col=2&value=${mode}`);
+    await fetch(`${base}?action=edit&sheet=Settings&row=14&col=2&value=${mode}&silent=true`);
   }
 
   const msgs = {
