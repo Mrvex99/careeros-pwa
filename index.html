@@ -1780,6 +1780,7 @@ async function loadAllData() {
     loadMonthlyPlan(),
     loadReviews(),
   ]);
+  autoDetectEnergyMode();
   renderDashboard();
   renderDoctors();
   populateDoctorFilters();
