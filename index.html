@@ -1907,6 +1907,31 @@ function openStudyOrBlock() {
   openModal('modal-study');
 }
    
+   async function submitMCQ() {
+  const topic = document.getElementById('mcqTopic').value;
+  const count = document.getElementById('mcqCount').value;
+  const score = document.getElementById('mcqScore').value;
+
+  closeModal('modal-mcq');
+  showToast('⏳ جاري التسجيل...', '');
+
+  if (APP.apiUrl) {
+    await callAPI('/review', {
+      topic,
+      level: '1',
+      category: topic,
+      note: `MCQ: ${count} سؤال${score ? ' | Score: ' + score + '%' : ''} | On-Call Session`
+    });
+    await loadReviews();
+    renderStudyScreen();
+  }
+
+  showToast(`⚡ تم تسجيل ${count} سؤال — ${topic}`, 'success');
+  document.getElementById('mcqCount').value = '10';
+  document.getElementById('mcqScore').value = '';
+}
+
+   
 // ═══════════════════════════════════════════════
 //  DASHBOARD RENDER
 // ═══════════════════════════════════════════════
