@@ -1960,16 +1960,10 @@ function autoDetectEnergyMode() {
     autoMode = 'POSTCALL';
   }
 
-  // لو الـ mode اتغيّر — حدّثه
-    if (autoMode !== (APP.data.settings.energy_mode || 'NORMAL')) {
+  const currentMode = APP.data.settings.energy_mode || 'NORMAL';
+  if (autoMode !== currentMode) {
     APP.data.settings.energy_mode = autoMode;
     renderEnergyMode();
-
-    // حفظ بدون إشعار Telegram
-    if (APP.apiUrl) {
-      const base = APP.apiUrl.split('?')[0];
-      fetch(`${base}?action=edit&sheet=Settings&row=13&col=2&value=${autoMode}&silent=true`);
-    }
   }
 }
 
