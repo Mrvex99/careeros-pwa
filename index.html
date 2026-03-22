@@ -1802,8 +1802,7 @@ async function loadSettings() {
   } catch(e) {
     APP.data.settings = getLocalSettings();
   }
-  // تحديد Energy Mode تلقائياً
-  autoDetectEnergyMode();
+ 
 }
 
 
@@ -3064,7 +3063,6 @@ async function submitShift() {
     await callAPI('/shift', { date, type, hosp, gov, is24h });
     await loadShifts();
     await loadSettings();
-    autoDetectEnergyMode();
     renderDashboard();
     renderPlanScreen();
   }
