@@ -1916,9 +1916,11 @@ async function setEnergyMode(mode) {
   APP.data.settings.energy_mode = mode;
   renderEnergyMode();
 
-  if (APP.apiUrl) {
+ if (APP.apiUrl) {
     const base = APP.apiUrl.split('?')[0];
-    await fetch(`${base}?action=edit&sheet=Settings&row=14&col=2&value=${mode}&silent=true`);
+    const now  = new Date().toISOString().split('T')[0];
+    await fetch(`${base}?action=edit&sheet=Settings&row=13&col=2&value=${mode}&silent=true`);
+    await fetch(`${base}?action=edit&sheet=Settings&row=14&col=2&value=${now}&silent=true`);
   }
 
   const msgs = {
